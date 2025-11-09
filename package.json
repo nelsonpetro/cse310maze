@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/simple.js",
+    "start": "tsc && node dist/index.js",
     "demo": "tsc && node dist/demo.js",
-    "dev": "tsc && node dist/simple.js",
+    "dev": "tsc && node dist/index.js",
     "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js,json,md}\""
   },

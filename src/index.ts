@@ -99,7 +99,7 @@ function askQuestion(
   });
 }
 
-if (import.meta.url.includes("simple.js")) {
+if (import.meta.url.includes("index.js")) {
   runSimpleMaze();
 }
 
