@@ -17,6 +17,7 @@ class Maze {
     this._height = height;
     this._grid = this.createGrid(initializeWalls);
   }
+
   private createGrid(withWalls: boolean): Cell[][] {
     const grid: Cell[][] = [];
     for (let y = 0; y < this._height; y++) {
@@ -29,24 +30,31 @@ class Maze {
     }
     return grid;
   }
+
   public get width(): number {
     return this._width;
   }
+
   public get height(): number {
     return this._height;
   }
+
   public get totalCells(): number {
     return this._width * this._height;
   }
+
   public get dimensions(): { width: number; height: number } {
     return { width: this._width, height: this._height };
   }
+
   public isValidPosition(x: number, y: number): boolean {
     return x >= 0 && x < this._width && y >= 0 && y < this._height;
   }
+
   public isValidPositionObject(pos: Position): boolean {
     return this.isValidPosition(pos.x, pos.y);
   }
+
   public getCell(x: number, y: number): Cell {
     if (!this.isValidPosition(x, y)) {
       throw new Error(
@@ -55,15 +63,18 @@ class Maze {
     }
     return this._grid[y]![x]!;
   }
+
   public getCellAt(pos: Position): Cell {
     return this.getCell(pos.x, pos.y);
   }
+
   public getCellSafe(x: number, y: number): Cell | undefined {
     if (!this.isValidPosition(x, y)) {
       return undefined;
     }
     return this._grid[y]![x]!;
   }
+
   public setCell(x: number, y: number, cell: Cell): void {
     if (!this.isValidPosition(x, y)) {
       throw new Error(`Cannot set cell at (${x}, ${y}): out of bounds`);
@@ -75,6 +86,7 @@ class Maze {
     }
     this._grid[y]![x] = cell;
   }
+
   public getNeighbors(cell: Cell): Cell[] {
     const neighbors: Cell[] = [];
     for (const direction of ALL_DIRECTIONS) {
@@ -86,6 +98,7 @@ class Maze {
     }
     return neighbors;
   }
+
   public getAccessibleNeighbors(cell: Cell): Cell[] {
     const accessibleNeighbors: Cell[] = [];
     for (const direction of cell.getOpenDirections()) {
@@ -97,9 +110,11 @@ class Maze {
     }
     return accessibleNeighbors;
   }
+
   public getUnvisitedNeighbors(cell: Cell): Cell[] {
     return this.getNeighbors(cell).filter((neighbor) => !neighbor.visited);
   }
+
   public getNeighborInDirection(
     cell: Cell,
     direction: Direction
@@ -107,15 +122,18 @@ class Maze {
     const neighborPos = cell.getNeighborPosition(direction);
     return this.getCellSafe(neighborPos.x, neighborPos.y);
   }
+
   public areNeighbors(cell1: Cell, cell2: Cell): boolean {
     return cell1.isAdjacentTo(cell2);
   }
+
   public getDirectionBetween(from: Cell, to: Cell): Direction {
     if (!this.areNeighbors(from, to)) {
       throw new Error(
         `Cells (${from.x}, ${from.y}) and (${to.x}, ${to.y}) are not neighbors`
       );
     }
+
     const dx = to.x - from.x;
     const dy = to.y - from.y;
     if (dx === 1 && dy === 0) return Direction.Right;
@@ -124,11 +142,13 @@ class Maze {
     if (dx === 0 && dy === -1) return Direction.Up;
     throw new Error(`Invalid direction calculation between cells`);
   }
+
   public arePositionsAdjacent(pos1: Position, pos2: Position): boolean {
     const dx = Math.abs(pos1.x - pos2.x);
     const dy = Math.abs(pos1.y - pos2.y);
     return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
   }
+
   public canMoveBetween(from: Position, to: Position): boolean {
     if (!this.arePositionsAdjacent(from, to)) {
       return false;
@@ -140,6 +160,7 @@ class Maze {
       !fromCell.hasWallInDirection(this.getDirectionBetween(fromCell, toCell))
     );
   }
+
   public removeWallBetween(cell1: Cell, cell2: Cell): void {
     if (!this.areNeighbors(cell1, cell2)) {
       throw new Error(`Cannot remove wall: cells are not neighbors`);
@@ -149,11 +170,13 @@ class Maze {
     cell1.removeWallMutable(direction1to2);
     cell2.removeWallMutable(direction2to1);
   }
+
   public removeWallBetweenPositions(pos1: Position, pos2: Position): void {
     const cell1 = this.getCellAt(pos1);
     const cell2 = this.getCellAt(pos2);
     this.removeWallBetween(cell1, cell2);
   }
+
   public addWallBetween(cell1: Cell, cell2: Cell): void {
     if (!this.areNeighbors(cell1, cell2)) {
       throw new Error(`Cannot add wall: cells are not neighbors`);
@@ -163,6 +186,7 @@ class Maze {
     cell1.addWallMutable(direction1to2);
     cell2.addWallMutable(direction2to1);
   }
+
   public hasPassageBetween(cell1: Cell, cell2: Cell): boolean {
     if (!this.areNeighbors(cell1, cell2)) {
       return false;
@@ -170,6 +194,7 @@ class Maze {
     const direction = this.getDirectionBetween(cell1, cell2);
     return cell1.isOpenInDirection(direction);
   }
+
   public *getAllCells(): Generator<Cell, void, unknown> {
     for (let y = 0; y < this._height; y++) {
       for (let x = 0; x < this._width; x++) {
@@ -177,6 +202,7 @@ class Maze {
       }
     }
   }
+
   public getCellsArray(): Cell[] {
     const cells: Cell[] = [];
     for (const cell of this.getAllCells()) {
@@ -184,6 +210,7 @@ class Maze {
     }
     return cells;
   }
+
   public *getRow(y: number): Generator<Cell, void, unknown> {
     if (y < 0 || y >= this._height) {
       throw new Error(`Row ${y} is out of bounds`);
@@ -202,11 +229,13 @@ class Maze {
       }
     }
   }
+
   public resetVisited(): void {
     for (const cell of this.getAllCells()) {
       cell.reset();
     }
   }
+
   public resetToFullyWalled(): void {
     this.forEachCell((cell, x, y) => {
       const newCell = new Cell(x, y);
@@ -255,6 +284,7 @@ class Maze {
     }
     return null;
   }
+
   private dfsRecursive(
     current: Position,
     target: Position,
@@ -277,6 +307,7 @@ class Maze {
     path.pop();
     return false;
   }
+
   public solveBFS(start: Position, end: Position): Position[] | null {
     if (!this.isValidPositionObject(start)) {
       throw new Error(`Invalid start position: (${start.x}, ${start.y})`);
@@ -314,6 +345,7 @@ class Maze {
     }
     return null;
   }
+
   private reconstructPath(targetNode: {
     position: Position;
     parent: any;
@@ -459,6 +491,7 @@ class Maze {
     result = result.slice(0, -1) + "┘";
     return result;
   }
+
   public toStringWithComparedPaths(
     path1: Position[],
     path2: Position[],
@@ -527,8 +560,10 @@ class Maze {
     result = result.slice(0, -1) + "┘";
     return result;
   }
+
   public static createOpen(width: number, height: number): Maze {
     return new Maze(width, height, false);
   }
 }
+
 export { Maze };
