@@ -2,6 +2,10 @@ import { Maze } from "./classes/Maze.js";
 import type { Position } from "./types/Position.js";
 import * as readline from "readline";
 
+/**
+ * Interactive maze application that allows users to customize maze dimensions
+ * and starting/ending positions, then compare DFS vs BFS pathfinding algorithms
+ */
 async function runSimpleMaze(): Promise<void> {
   console.log("Maze Algorithm - Simple Version");
   console.log("======================================");
@@ -88,6 +92,13 @@ async function runSimpleMaze(): Promise<void> {
   }
 }
 
+/**
+ * Promisified wrapper for readline question functionality
+ * Converts callback-based readline interface to async/await pattern
+ * @param rl - The readline interface instance
+ * @param question - The question string to display to the user
+ * @returns Promise resolving to the user's input string
+ */
 function askQuestion(
   rl: readline.Interface,
   question: string

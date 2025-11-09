@@ -1,6 +1,10 @@
 import { Maze } from "./classes/Maze.js";
 import type { Position } from "./types/Position.js";
 
+/**
+ * Demonstrates maze generation and pathfinding algorithms with predefined settings
+ * Creates a 6x5 maze and shows comparison between DFS and BFS solving algorithms
+ */
 function runMazeDemo(): void {
   console.log("Maze Algorithm - Demo Version");
   console.log("====================================");
